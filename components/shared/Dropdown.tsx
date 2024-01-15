@@ -5,8 +5,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { ICategory } from "@/lib/database/models/category.model"
-import { startTransition, useEffect, useState } from "react"
+
 import {
     AlertDialog,
     AlertDialogAction,
@@ -19,7 +18,9 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Input } from "../ui/input"
-// import { createCategory, getAllCategories } from "@/lib/actions/category.actions"
+import { startTransition, useEffect, useState } from "react"
+import { ICategory } from "@/lib/database/models/category.model"
+import { createCategory, getAllCategories } from "@/lib/actions/category.actions"
 
 type DropdownProps = {
     value?: string
@@ -27,25 +28,30 @@ type DropdownProps = {
 }
 
 const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
-    const [categories, setCategories] = useState<ICategory[]>([])
+
+    const [categories, setCategories] = useState<ICategory[]>([]);
     const [newCategory, setNewCategory] = useState('');
 
     const handleAddCategory = () => {
-        // createCategory({
-        //     categoryName: newCategory.trim()
-        // })
-        //     .then((category) => {
-        //         setCategories((prevState) => [...prevState, category])
-        //     })
+
+        if (newCategory.trim().length < 1) return;
+
+        createCategory({
+            categoryName: newCategory.trim()
+        })
+            .then((category) => {
+                setCategories((prevState) => [category, ...prevState]);
+            });
+
+    }
+
+    const getCategories = async () => {
+        const categoryList = await getAllCategories();
+
+        categoryList && setCategories(categoryList as ICategory[])
     }
 
     useEffect(() => {
-        const getCategories = async () => {
-            // const categoryList = await getAllCategories();
-
-            // categoryList && setCategories(categoryList as ICategory[])
-        }
-
         getCategories();
     }, [])
 
@@ -54,12 +60,16 @@ const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
             <SelectTrigger className="select-field">
                 <SelectValue placeholder="Category" />
             </SelectTrigger>
+
             <SelectContent>
-                {categories.length > 0 && categories.map((category) => (
-                    <SelectItem key={category._id} value={category._id} className="select-item p-regular-14">
-                        {category.name}
-                    </SelectItem>
-                ))}
+
+                {categories.length > 0 && (
+                    categories.map((category) => (
+                        <SelectItem key={category._id} value={category.name} className="select-item p-regular-14">
+                            {category.name}
+                        </SelectItem>
+                    ))
+                )}
 
                 <AlertDialog>
                     <AlertDialogTrigger className="p-medium-14 flex w-full rounded-sm py-3 pl-8 text-primary-500 hover:bg-primary-50 focus:text-primary-500">Add new category</AlertDialogTrigger>
@@ -76,8 +86,10 @@ const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
                         </AlertDialogFooter>
                     </AlertDialogContent>
                 </AlertDialog>
+
             </SelectContent>
         </Select>
+
     )
 }
 

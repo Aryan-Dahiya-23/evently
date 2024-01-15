@@ -1,9 +1,12 @@
-import EventForm from "@/components/shared/EventForm"
+import EventForm from "@/components/shared/EventForm";
 import { auth } from "@clerk/nextjs";
 
-const CreateEvent = () => {
-    const { sessionClaims } = auth();
+const CreateEvent = async () => {
+    // const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+    // await delay(15000);
+
+    const { sessionClaims } = auth();
     const userId = sessionClaims?.userId as string;
 
     return (

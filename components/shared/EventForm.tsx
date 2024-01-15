@@ -1,8 +1,9 @@
-'use client'
+"use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import * as z from 'zod'
+import * as z from "zod"
+
 import { Button } from "@/components/ui/button"
 import {
     Form,
@@ -14,20 +15,17 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+
 import { eventFormSchema } from "@/lib/validator"
-import { IEvent } from "@/lib/database/models/event.model"
 import { eventDefaultValues } from "@/constants"
 import Dropdown from "./Dropdown"
-import { Textarea } from "../ui/textarea"
 
 type EventFormProps = {
-    userId: string
+    userId: string,
     type: "Create" | "Update"
-    event?: IEvent,
-    eventId?: string
-}
+};
 
-const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
+const EventForm = ({ userId, type }: EventFormProps) => {
 
     const initialValues = eventDefaultValues;
 
@@ -36,27 +34,22 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
         defaultValues: initialValues
     })
 
-    function onSubmit(values: z.infer<typeof eventFormSchema>) {
+    const onSubmit = async (values: z.infer<typeof eventFormSchema>) => {
         console.log(values)
-        console.log('hey')
     }
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5">
-
-                <div className="flex flex-col gap-5 md:flex-row">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                <div className="flex flex-col md:flex-row gap-5 ">
                     <FormField
                         control={form.control}
                         name="title"
                         render={({ field }) => (
                             <FormItem className="w-full">
                                 <FormControl>
-                                    <Input placeholder="Event title" {...field} className="input-field" />
+                                    <Input placeholder="Event Title" {...field} className="input-field" />
                                 </FormControl>
-                                <FormDescription>
-                                    This is your public display name.
-                                </FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -70,51 +63,45 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
                                 <FormControl>
                                     <Dropdown onChangeHandler={field.onChange} value={field.value} />
                                 </FormControl>
-                                <FormDescription>
-                                    This is your public display name.
-                                </FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
                 </div>
 
-                <div className="flex flex-col gap-5 md:flex-row">
+                {/* <div className="flex flex-col md:flex-row gap-5 ">
                     <FormField
                         control={form.control}
-                        name="description"
+                        name="title"
                         render={({ field }) => (
                             <FormItem className="w-full">
-                                <FormControl className="h-72">
-                                    <Textarea placeholder="Description" {...field} className="textarea rounded-2xl" />
+                                <FormControl>
+                                    <Input placeholder="Event Title" {...field} className="input-field" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
-                    {/* <FormField
+
+                    <FormField
                         control={form.control}
-                        name="imageUrl"
+                        name="categoryId"
                         render={({ field }) => (
                             <FormItem className="w-full">
-                                <FormControl className="h-72">
-                                    <FileUploader
-                                        onFieldChange={field.onChange}
-                                        imageUrl={field.value}
-                                        setFiles={setFiles}
-                                    />
+                                <FormControl>
+                                    <Dropdown onChangeHandler={field.onChange} value={field.value} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
                         )}
-                    /> */}
-                </div>
+                    />
+                </div> */}
 
+                <Button type="submit" className="button col-span-2 w-full">Create Event</Button>
 
-                <Button type="submit">Submit</Button>
             </form>
         </Form>
     )
 }
 
-export default EventForm
+export default EventForm;
