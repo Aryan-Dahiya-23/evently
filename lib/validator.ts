@@ -8,7 +8,14 @@ export const eventFormSchema = z.object({
     startDateTime: z.date(),
     endDateTime: z.date(),
     categoryId: z.string(),
-    price: z.string(),
+    price: z.string().refine(value => {
+        if (value === '') return true;
+        const parsedValue = parseFloat(value);
+        return !isNaN(parsedValue) && parsedValue >= 0;
+    }, {
+        message: 'Price must be an empty string or a positive number'
+    }),
+    // price: z.string(),
     isFree: z.boolean(),
     url: z.string().url()
 })
