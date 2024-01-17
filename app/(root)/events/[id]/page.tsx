@@ -16,8 +16,8 @@ const EventDetails = async ({ params: { id }, searchParams }: SearchParamProps) 
 
   return (
     <>
-      <section className="flex justify-center bg-primary-50 bg-dotted-pattern bg-contain">  
-        <div className="grid grid-cols-1 md:grid-cols-2 2xl:max-w-7xl py-1">
+      <section className="flex justify-center bg-primary-50 bg-dotted-pattern bg-contain">
+        <div className="grid grid-cols-1 md:grid-cols-2 2xl:max-w-7xl">
           <Image
             src={event.imageUrl}
             alt="hero image"
@@ -52,7 +52,7 @@ const EventDetails = async ({ params: { id }, searchParams }: SearchParamProps) 
             <div className="flex flex-col gap-5">
               <div className='flex gap-2 md:gap-3'>
                 <Image src="/assets/icons/calendar.svg" alt="calendar" width={32} height={32} />
-                <div className="p-medium-16 space-x-0.5 lg:p-regular-20 flex flex-wrap items-center">
+                <div className="p-medium-16 lg:p-regular-20 flex flex-wrap items-center">
                   <p>
                     {formatDateTime(event.startDateTime).dateOnly} - {' '}
                     {formatDateTime(event.startDateTime).timeOnly}
@@ -71,9 +71,9 @@ const EventDetails = async ({ params: { id }, searchParams }: SearchParamProps) 
             </div>
 
             <div className="flex flex-col gap-2">
-              <p className="p-bold-20 text-grey-600">{"What You'll Learn:"}</p>
+              <p className="p-bold-20 text-grey-600">What You'll Learn:</p>
               <p className="p-medium-16 lg:p-regular-18">{event.description}</p>
-              <a href={event.url} target="_blank" className="p-medium-16 lg:p-regular-18 truncate text-primary-500 underline cursor-pointer">{event.url}</a>
+              <p className="p-medium-16 lg:p-regular-18 truncate text-primary-500 underline">{event.url}</p>
             </div>
           </div>
         </div>
@@ -98,6 +98,3 @@ const EventDetails = async ({ params: { id }, searchParams }: SearchParamProps) 
 }
 
 export default EventDetails
-
-
-// http://localhost:3000/events/65a7b335e469034b5db984f4
