@@ -16,7 +16,7 @@ export default async function Home({ searchParams }: SearchParamProps) {
     query: searchText,
     category,
     page,
-    limit: 12
+    limit: 6
   })
 
   return (
