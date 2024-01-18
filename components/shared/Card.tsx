@@ -18,20 +18,6 @@ const Card = ({ event, hasOrderLink, hidePrice }: CardProps) => {
 
     const isEventCreator = userId === event.organizer._id.toString();
 
-    const dateString = event.startDateTime;
-    const date = new Date(dateString);
-
-    const options: Intl.DateTimeFormatOptions = {
-        weekday: 'short',
-        month: 'short',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-        hour12: true,
-    };
-
-    const formattedTime = date.toLocaleString('en-US', options);
-
     return (
         <div className="group relative flex min-h-[380px] w-full max-w-[400px] flex-col overflow-hidden rounded-xl bg-white shadow-md transition-all hover:shadow-lg md:min-h-[438px]">
             <Link
@@ -64,7 +50,7 @@ const Card = ({ event, hasOrderLink, hidePrice }: CardProps) => {
                 </div>}
 
                 <p className="p-medium-16 p-medium-18 text-grey-500">
-                    {formattedTime}
+                    {formatDateTime(event.startDateTime).dateTime}
                 </p>
 
                 <Link href={`/events/${event._id}`}>

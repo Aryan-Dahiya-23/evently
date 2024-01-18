@@ -11,6 +11,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export const formatDateTime = (dateString: Date) => {
   const dateTimeOptions: Intl.DateTimeFormatOptions = {
+    timeZone: 'Asia/Kolkata', // Specify the time zone for India
     weekday: 'short', // abbreviated weekday name (e.g., 'Mon')
     month: 'short', // abbreviated month name (e.g., 'Oct')
     day: 'numeric', // numeric day of the month (e.g., '25')
