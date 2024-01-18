@@ -31,7 +31,7 @@ export default function RootLayout({
           <NextTopLoader
             color="#2299DD"
             initialPosition={0.08}
-            crawlSpeed={200}
+            crawlSpeed={500}
             height={3}
             crawl={true}
             showSpinner={false}
