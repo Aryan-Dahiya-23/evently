@@ -51,7 +51,7 @@ const EventDetails = async ({ params: { id }, searchParams }: SearchParamProps) 
             <CheckoutButton event={event} />
 
             <div className="flex flex-col gap-5">
-              <div className='flex gap-2 md:gap-3'>
+              <div className='flex gap-2'>
                 <Image src="/assets/icons/calendar.svg" alt="calendar" width={32} height={32} />
                 <div className="p-medium-16 lg:p-regular-20 flex flex-wrap items-center space-x-0.5">
                   <p>
@@ -65,7 +65,7 @@ const EventDetails = async ({ params: { id }, searchParams }: SearchParamProps) 
                 </div>
               </div>
 
-              <div className="p-regular-20 flex items-center gap-3">
+              <div className="p-regular-20 flex items-center gap-2">
                 <Image src="/assets/icons/location.svg" alt="location" width={32} height={32} />
                 <p className="p-medium-16 lg:p-regular-20">{event.location}</p>
               </div>
