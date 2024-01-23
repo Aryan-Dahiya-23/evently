@@ -1,19 +1,51 @@
 import CheckoutButton from '@/components/shared/CheckoutButton';
 import Collection from '@/components/shared/Collection';
+import SkeletonLoading from '@/components/shared/SkeletonLoading';
 import { getEventById, getRelatedEventsByCategory } from '@/lib/actions/event.actions'
 import { formatDateTime } from '@/lib/utils';
 import { SearchParamProps } from '@/types'
 import Image from 'next/image';
+import { Suspense } from 'react';
 
-const EventDetails = async ({ params: { id }, searchParams }: SearchParamProps) => {
-  const event = await getEventById(id);
-  const page = Number(searchParams?.page) || 1;
+type RelatedEventsProps = {
+  categoryId: string,
+  eventId: string,
+  page: number,
+}
+
+const RelatedEvents = async ({ categoryId, eventId, page }: RelatedEventsProps) => {
 
   const relatedEvents = await getRelatedEventsByCategory({
-    categoryId: event.category._id,
-    eventId: event._id,
-    page,
+    categoryId,
+    eventId,
+    page
   })
+
+  return (
+    <Collection
+      data={relatedEvents?.data}
+      emptyTitle="No Events Found"
+      emptyStateSubtext="Come back later"
+      collectionType="All_Events"
+      limit={3}
+      page={page}
+      totalPages={relatedEvents?.totalPages}
+    />
+  )
+}
+
+const EventDetails = async ({ params: { id }, searchParams }: SearchParamProps) => {
+
+  // const event = await getEventById(id);
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/event?id=${id}`, {
+    method: 'GET',
+    next: { revalidate: 600 },
+  })
+
+  const event = await res.json();
+
+  const page = Number(searchParams?.page) || 1;
 
   return (
     <>
@@ -84,15 +116,14 @@ const EventDetails = async ({ params: { id }, searchParams }: SearchParamProps) 
       <section className="wrapper my-8 flex flex-col gap-8 md:gap-12">
         <h2 className="h2-bold">Related Events</h2>
 
-        <Collection
-          data={relatedEvents?.data}
-          emptyTitle="No Events Found"
-          emptyStateSubtext="Come back later"
-          collectionType="All_Events"
-          limit={3}
-          page={page}
-          totalPages={relatedEvents?.totalPages}
-        />
+        <Suspense fallback={<SkeletonLoading length={3} />}>
+          <RelatedEvents
+            categoryId={event.category._id}
+            eventId={event._id}
+            page={page}
+          />
+        </Suspense>
+
       </section>
     </>
   )

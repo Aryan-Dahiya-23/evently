@@ -1,4 +1,5 @@
 import Collection from '@/components/shared/Collection'
+import SkeletonLoading from '@/components/shared/SkeletonLoading'
 import { Button } from '@/components/ui/button'
 import { getEventsByUser } from '@/lib/actions/event.actions'
 import { getOrdersByUser } from '@/lib/actions/order.actions'
@@ -6,20 +7,56 @@ import { IOrder } from '@/lib/database/models/order.model'
 import { SearchParamProps } from '@/types'
 import { auth } from '@clerk/nextjs'
 import Link from 'next/link'
-import React from 'react'
+import { Suspense } from 'react'
 
-const ProfilePage = async ({ searchParams }: SearchParamProps) => {
+type Props = {
+  userId: string,
+  page: number,
+}
+
+const Orders = async ({ userId, page }: Props) => {
+
+  const orders = await getOrdersByUser({ userId, page })
+  const orderedEvents = orders?.data.map((order: IOrder) => order.event) || [];
+
+  return (
+    <Collection
+      data={orderedEvents}
+      emptyTitle="No event tickets purchased yet"
+      emptyStateSubtext="No worries - plenty of exciting events to explore!"
+      collectionType="My_Tickets"
+      limit={3}
+      page={page}
+      urlParamName="ordersPage"
+      totalPages={orders?.totalPages}
+    />
+  )
+}
+
+const Events = async ({ userId, page }: Props) => {
+
+  const organizedEvents = await getEventsByUser({ userId, page })
+
+  return (
+    <Collection
+      data={organizedEvents?.data}
+      emptyTitle="No events have been created yet"
+      emptyStateSubtext="Go create some now"
+      collectionType="Events_Organized"
+      limit={3}
+      page={page}
+      urlParamName="eventsPage"
+      totalPages={organizedEvents?.totalPages}
+    />
+  )
+}
+
+const ProfilePage = ({ searchParams }: SearchParamProps) => {
   const { sessionClaims } = auth();
   const userId = sessionClaims?.userId as string;
 
   const ordersPage = Number(searchParams?.ordersPage) || 1;
   const eventsPage = Number(searchParams?.eventsPage) || 1;
-
-  const orders = await getOrdersByUser({ userId, page: ordersPage})
-
-  const orderedEvents = orders?.data.map((order: IOrder) => order.event) || [];
-
-  const organizedEvents = await getEventsByUser({ userId, page: eventsPage })
 
   return (
     <>
@@ -36,16 +73,11 @@ const ProfilePage = async ({ searchParams }: SearchParamProps) => {
       </section>
 
       <section className="wrapper my-8">
-        <Collection 
-          data={orderedEvents}
-          emptyTitle="No event tickets purchased yet"
-          emptyStateSubtext="No worries - plenty of exciting events to explore!"
-          collectionType="My_Tickets"
-          limit={3}
-          page={ordersPage}
-          urlParamName="ordersPage"
-          totalPages={orders?.totalPages}
-        />
+
+        <Suspense fallback={<SkeletonLoading length={3} />}>
+          <Orders userId={userId} page={ordersPage} />
+        </Suspense>
+
       </section>
 
       {/* Events Organized */}
@@ -61,16 +93,9 @@ const ProfilePage = async ({ searchParams }: SearchParamProps) => {
       </section>
 
       <section className="wrapper my-8">
-        <Collection 
-          data={organizedEvents?.data}
-          emptyTitle="No events have been created yet"
-          emptyStateSubtext="Go create some now"
-          collectionType="Events_Organized"
-          limit={3}
-          page={eventsPage}
-          urlParamName="eventsPage"
-          totalPages={organizedEvents?.totalPages}
-        />
+        <Suspense fallback={<SkeletonLoading length={3} />}>
+          <Events userId={userId} page={eventsPage} />
+        </Suspense>
       </section>
     </>
   )

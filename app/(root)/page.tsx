@@ -1,16 +1,21 @@
 import CategoryFilter from '@/components/shared/CategoryFilter';
 import Collection from '@/components/shared/Collection'
 import Search from '@/components/shared/Search';
+import SkeletonLoading from '@/components/shared/SkeletonLoading';
 import { Button } from '@/components/ui/button'
 import { getAllEvents } from '@/lib/actions/event.actions';
 import { SearchParamProps } from '@/types';
 import Image from 'next/image'
 import Link from 'next/link'
+import { Suspense } from 'react';
 
-export default async function Home({ searchParams }: SearchParamProps) {
-  const page = Number(searchParams?.page) || 1;
-  const searchText = (searchParams?.query as string) || '';
-  const category = (searchParams?.category as string) || '';
+type EventsProps = {
+  searchText: string,
+  category: string,
+  page: number
+}
+
+async function Events({ searchText, category, page }: EventsProps) {
 
   const events = await getAllEvents({
     query: searchText,
@@ -18,6 +23,24 @@ export default async function Home({ searchParams }: SearchParamProps) {
     page,
     limit: 6
   })
+
+  return (
+    <Collection
+      data={events?.data}
+      emptyTitle="No Events Found"
+      emptyStateSubtext="Come back later"
+      collectionType="All_Events"
+      limit={6}
+      page={page}
+      totalPages={events?.totalPages}
+    />
+  )
+}
+
+export default function Home({ searchParams }: SearchParamProps) {
+  const page = Number(searchParams?.page) || 1;
+  const searchText = (searchParams?.query as string) || '';
+  const category = (searchParams?.category as string) || '';
 
   return (
     <>
@@ -33,7 +56,7 @@ export default async function Home({ searchParams }: SearchParamProps) {
             </Button>
           </div>
 
-          <Image 
+          <Image
             src="/assets/images/hero.png"
             alt="hero"
             width={1000}
@@ -41,7 +64,7 @@ export default async function Home({ searchParams }: SearchParamProps) {
             className="max-h-[70vh] object-contain object-center 2xl:max-h-[50vh]"
           />
         </div>
-      </section> 
+      </section>
 
       <section id="events" className="wrapper my-8 flex flex-col gap-8 md:gap-12">
         <h2 className="h2-bold">Trust by <br /> Thousands of Events</h2>
@@ -51,15 +74,14 @@ export default async function Home({ searchParams }: SearchParamProps) {
           <CategoryFilter />
         </div>
 
-        <Collection 
-          data={events?.data}
-          emptyTitle="No Events Found"
-          emptyStateSubtext="Come back later"
-          collectionType="All_Events"
-          limit={6}
-          page={page}
-          totalPages={events?.totalPages}
-        />
+        <Suspense fallback={<SkeletonLoading length={6} />}>
+          <Events
+            searchText={searchText}
+            category={category}
+            page={page}
+          />
+        </Suspense>
+
       </section>
     </>
   )

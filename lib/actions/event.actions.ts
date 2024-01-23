@@ -48,6 +48,7 @@ export async function createEvent({ userId, event, path }: CreateEventParams) {
 // GET ONE EVENT BY ID
 export async function getEventById(eventId: string) {
     try {
+
         await connectToDatabase()
 
         const event = await populateEvent(Event.findById(eventId))
