@@ -16,7 +16,14 @@ type Props = {
 
 const Orders = async ({ userId, page }: Props) => {
 
-  const orders = await getOrdersByUser({ userId, page })
+  // const orders = await getOrdersByUser({ userId, page })
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/events/orderedEvents?userId=${userId}&page=${page}`, {
+    method: 'GET',
+    next: { revalidate: 3600 },
+  });
+  const orders = await res.json();
+
   const orderedEvents = orders?.data.map((order: IOrder) => order.event) || [];
 
   return (
@@ -35,7 +42,14 @@ const Orders = async ({ userId, page }: Props) => {
 
 const Events = async ({ userId, page }: Props) => {
 
-  const organizedEvents = await getEventsByUser({ userId, page })
+  // const organizedEvents = await getEventsByUser({ userId, page })
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/events/organizedEvents?userId=${userId}&page=${page}`, {
+    method: 'GET',
+    next: { revalidate: 3600 },
+  });
+
+  const organizedEvents = await res.json();
 
   return (
     <Collection

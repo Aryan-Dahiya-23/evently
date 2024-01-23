@@ -1,7 +1,6 @@
 import CheckoutButton from '@/components/shared/CheckoutButton';
 import Collection from '@/components/shared/Collection';
 import SkeletonLoading from '@/components/shared/SkeletonLoading';
-import { getEventById, getRelatedEventsByCategory } from '@/lib/actions/event.actions'
 import { formatDateTime } from '@/lib/utils';
 import { SearchParamProps } from '@/types'
 import Image from 'next/image';
@@ -15,11 +14,12 @@ type RelatedEventsProps = {
 
 const RelatedEvents = async ({ categoryId, eventId, page }: RelatedEventsProps) => {
 
-  const relatedEvents = await getRelatedEventsByCategory({
-    categoryId,
-    eventId,
-    page
-  })
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/events/relatedEvents?categoryId=${categoryId}&eventId=${eventId}&page=${page}`, {
+    method: 'GET',
+    next: { revalidate: 3600 },
+  });
+
+  const relatedEvents = await res.json();
 
   return (
     <Collection
@@ -36,11 +36,9 @@ const RelatedEvents = async ({ categoryId, eventId, page }: RelatedEventsProps) 
 
 const EventDetails = async ({ params: { id }, searchParams }: SearchParamProps) => {
 
-  // const event = await getEventById(id);
-
-  const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/event?id=${id}`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/events/event?id=${id}`, {
     method: 'GET',
-    next: { revalidate: 600 },
+    next: { revalidate: 3600 },
   })
 
   const event = await res.json();

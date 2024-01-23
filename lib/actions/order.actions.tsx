@@ -9,10 +9,13 @@ import Order from '../database/models/order.model';
 import Event from '../database/models/event.model';
 import { ObjectId } from 'mongodb';
 import User from '../database/models/user.model';
+import { revalidatePath } from 'next/cache'
 
 export const checkoutOrder = async (order: CheckoutOrderParams) => {
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
+    revalidatePath('/', 'layout');
+
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
     const price = order.isFree ? 0 : Number(order.price) * 100;
 
     try {
@@ -53,6 +56,7 @@ export const createOrder = async (order: CreateOrderParams) => {
             event: order.eventId,
             buyer: order.buyerId,
         });
+        revalidatePath('/', 'layout');
 
         return JSON.parse(JSON.stringify(newOrder));
     } catch (error) {

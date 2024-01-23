@@ -3,7 +3,6 @@ import Collection from '@/components/shared/Collection'
 import Search from '@/components/shared/Search';
 import SkeletonLoading from '@/components/shared/SkeletonLoading';
 import { Button } from '@/components/ui/button'
-import { getAllEvents } from '@/lib/actions/event.actions';
 import { SearchParamProps } from '@/types';
 import Image from 'next/image'
 import Link from 'next/link'
@@ -17,12 +16,12 @@ type EventsProps = {
 
 async function Events({ searchText, category, page }: EventsProps) {
 
-  const events = await getAllEvents({
-    query: searchText,
-    category,
-    page,
-    limit: 6
-  })
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/events/allEvents?query=${searchText}&category=${category}&page=${page}`, {
+    method: 'GET',
+    next: { revalidate: 3600 },
+  });
+
+  const events = await res.json();
 
   return (
     <Collection

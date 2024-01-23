@@ -15,7 +15,11 @@ export default authMiddleware({
         '/api/webhook/clerk',
         '/api/webhook/stripe',
         '/api/uploadthing',
-        '/api/event',
+        '/api/events/event',
+        '/api/events/relatedEvents',
+        '/api/events/allEvents',
+        '/api/events/orderedEvents',
+        '/api/events/organizedEvents',
     ]
 });
 
