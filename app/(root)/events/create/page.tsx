@@ -1,6 +1,11 @@
+import type { Metadata } from 'next'
 import EventForm from "@/components/shared/EventForm";
 import { auth } from "@clerk/nextjs";
 
+export const metadata: Metadata = {
+    title: 'Create Event - Evently'
+  }
+  
 const CreateEvent = async () => {
     // const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 

@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Collection from '@/components/shared/Collection'
 import SkeletonLoading from '@/components/shared/SkeletonLoading'
 import { Button } from '@/components/ui/button'
@@ -15,8 +16,6 @@ type Props = {
 }
 
 const Orders = async ({ userId, page }: Props) => {
-
-  // const orders = await getOrdersByUser({ userId, page })
 
   const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/events/orderedEvents?userId=${userId}&page=${page}`, {
     method: 'GET',
@@ -41,8 +40,6 @@ const Orders = async ({ userId, page }: Props) => {
 }
 
 const Events = async ({ userId, page }: Props) => {
-
-  // const organizedEvents = await getEventsByUser({ userId, page })
 
   const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/events/organizedEvents?userId=${userId}&page=${page}`, {
     method: 'GET',
@@ -74,6 +71,7 @@ const ProfilePage = ({ searchParams }: SearchParamProps) => {
 
   return (
     <>
+    <title>Profile - Evently</title>
       {/* My Tickets */}
       <section className="bg-primary-50 bg-dotted-pattern bg-cover bg-center py-5 md:py-10">
         <div className="wrapper flex items-center justify-center sm:justify-between">
